@@ -17,6 +17,7 @@ import os
 import base64
 from mlxtend.plotting import plot_decision_regions
 from sklearn.decomposition import PCA
+from Stock_Backtesting import ticker
 
 
 @st.cache
@@ -364,10 +365,12 @@ def xgb_page_builder(data):
     df_feature = pd.DataFrame.from_dict(
         model_xgb.get_booster().get_fscore(), orient='index')
     df_feature.columns = ['Feature Importance']
-    feature_importance = df_feature.sort_values(
-        by='Feature Importance', ascending=False).T
-    fig = px.bar(feature_importance, x=feature_importance.columns,
-                 y=feature_importance.T)
+    # print ("columns" , df_feature.columns)
+    feature_importance = df_feature.sort_values(by='Feature Importance', ascending=False).T
+    # print("columns",feature_importance.columns)
+    print("TTTT ",feature_importance.columns,feature_importance.T)
+    fig = px.bar(feature_importance, x=feature_importance.columns, y=feature_importance.T)
+    # print("fig")
     fig.update_xaxes(tickangle=45, title_text='Features')
     fig.update_yaxes(title_text='Feature Importance')
     st.plotly_chart(fig)
@@ -429,7 +432,7 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB"])
+                                        "Home", "Logistic Regression", "XGB","Stock Backtesting"])
 
     # Load data
     df, rows, columns, filename = load_data()
@@ -462,6 +465,15 @@ def main():
 
         if(st.checkbox("Want to Use this model to predict on a new dataset?")):
             xgb_predictor(model_xgb, rows, columns, df, drop_list)
+
+    if choose_model == "Stock Backtesting":
+        st.sidebar.header ('Hyper Parameters')
+        st.sidebar.markdown ('Enter a new ticker')
+        tickertxt = st.sidebar.text_input("Paste Aktie here", value='AMZN')
+        model_xgb = ticker(tickertxt)
+        #
+        # if(st.checkbox("Want to Use this model to predict on a new dataset?")):
+        #     xgb_predictor(model_xgb, rows, columns, df, drop_list)
 
 
 if __name__ == "__main__":
