@@ -18,6 +18,7 @@ import base64
 from mlxtend.plotting import plot_decision_regions
 from sklearn.decomposition import PCA
 from Stock_Backtesting import ticker
+from PredictVolatility import ticker
 
 
 @st.cache
@@ -432,7 +433,7 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB","Stock Backtesting"])
+                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility"])
 
     # Load data
     df, rows, columns, filename = load_data()
@@ -471,10 +472,13 @@ def main():
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input("Paste Aktie here", value='AMZN')
         model_xgb = ticker(tickertxt)
-        #
-        # if(st.checkbox("Want to Use this model to predict on a new dataset?")):
-        #     xgb_predictor(model_xgb, rows, columns, df, drop_list)
 
+
+    if choose_model == "Predict Volatility":
+        st.sidebar.header ('Aktien Parameter')
+        st.sidebar.markdown ('Enter a new ticker')
+        tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
+        model_xgb = ticker (tickertxt)
 
 if __name__ == "__main__":
     main()

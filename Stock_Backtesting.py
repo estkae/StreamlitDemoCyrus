@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
-
 
 import talib
 import plotly.graph_objects as go
@@ -32,7 +30,7 @@ def ticker (tickertxt):
     signal[EMA_short > EMA_long] = 1
     signal[EMA_short < EMA_long] = -1
 
-    print(type(signal))
+    #print(type(signal))
 
     st.markdown(signal[50:250])
 
