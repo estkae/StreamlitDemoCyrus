@@ -1,12 +1,12 @@
 xgboost==1.4.1
-pandas==1.2.3
+plotly==4.14.3
 yfinance==0.1.59
 numpy==1.19.5
-plotly==4.14.3
-#TA-Lib
+#TA_Lib==0.4.19
+streamlit==0.80.0
+pandas==1.2.3
 bt==0.2.9
 matplotlib==3.3.4
-streamlit==0.80.0
+arch==4.19
 mlxtend==0.18.0
 scikit_learn==0.24.2
-
