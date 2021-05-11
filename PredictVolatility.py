@@ -17,7 +17,7 @@ from dateutil.utils import today
 import streamlit as st
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
-def ticker (tickertxt):
+def tickerpv (tickertxt):
     ticker = tickertxt
     today = date.today ().strftime ("%Y-%m-%d")
     # print(today)

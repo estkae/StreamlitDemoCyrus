@@ -18,7 +18,7 @@ import base64
 from mlxtend.plotting import plot_decision_regions
 from sklearn.decomposition import PCA
 from Stock_Backtesting import ticker
-from PredictVolatility import ticker
+from PredictVolatility import tickerpv
 from Technical_Indicators import tickerti
 
 
@@ -434,21 +434,22 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators"])
+                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators","Dashbord"])
 
     # Load data
     df, rows, columns, filename = load_data()
     data, drop_list = data_preprocessing(df)
 
     # Provide checkbox for uploading different training dataset
-    if st.checkbox('Want to use other training set?'):
-        uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-        st.text(
-            "Note: Don't easily change training set which may bring big influence on prediction")
+    if choose_model == "Home":
+        if st.checkbox('Want to use other training set?'):
+            uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+            st.text(
+                "Note: Don't easily change training set which may bring big influence on prediction")
 
-        if uploaded_file:
-            df, data, drop_list, filename, rows, columns = upload_different_data(
-                uploaded_file)
+            if uploaded_file:
+                df, data, drop_list, filename, rows, columns = upload_different_data(
+                    uploaded_file)
 
     # Home page building
     if choose_model == "Home":
@@ -479,13 +480,20 @@ def main():
         st.sidebar.header ('Aktien Parameter')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
-        model_xgb = ticker (tickertxt)
+        model_xgb = tickerpv (tickertxt)
 
     if choose_model == "Technical Indicators":
         st.sidebar.header ('Technical Parameter')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerti (tickertxt)
+
+    if choose_model == "Dashbord":
+        st.sidebar.header ('Dashboard')
+        cwd = os.getcwd ()
+        data1 = pd.read_excel (cwd + "/Tabelle Mustermann-2.xls")
+        # print(data1)
+        st.table (data1)
 
 if __name__ == "__main__":
     main()
