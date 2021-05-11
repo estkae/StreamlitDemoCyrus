@@ -19,6 +19,7 @@ from mlxtend.plotting import plot_decision_regions
 from sklearn.decomposition import PCA
 from Stock_Backtesting import ticker
 from PredictVolatility import ticker
+from Technical_Indicators import tickerti
 
 
 @st.cache
@@ -433,7 +434,7 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility"])
+                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators"])
 
     # Load data
     df, rows, columns, filename = load_data()
@@ -479,6 +480,12 @@ def main():
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = ticker (tickertxt)
+
+    if choose_model == "Technical Indicators":
+        st.sidebar.header ('Technical Parameter')
+        st.sidebar.markdown ('Enter a new ticker')
+        tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
+        model_xgb = tickerti (tickertxt)
 
 if __name__ == "__main__":
     main()

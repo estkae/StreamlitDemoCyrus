@@ -12,12 +12,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from datetime import date
+from dateutil.utils import today
 import streamlit as st
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
 def ticker (tickertxt):
     ticker = tickertxt
-    stock_data = yf.download(ticker, start="2016-01-04", end="2021-04-30")
+    today = date.today ().strftime ("%Y-%m-%d")
+    # print(today)
+    # print(ticker)
+    stock_data = yf.download(ticker, start="2016-01-04", end=today)
 
     st.table(stock_data.head())
 
