@@ -11,6 +11,7 @@ import yfinance as yf
 from datetime import date
 import pandas as pd
 import bt
+import os
 import streamlit as st
 
 
@@ -123,11 +124,12 @@ def ticker (tickertxt):
     #
     # print("Type",type(bt_result.display()))
     # print(bt_result.to_csv().replace(",,,,,,,,,,,,,,,,,",","))
-    data = bt_result.to_csv("/Users/karlestermann/PycharmProjects/StreamlitDemoCyrus/blabla.csv").replace(",,,,,,,,,,,,,,,,,",",")
+    cwd =os.getcwd()
+    data = bt_result.to_csv(cwd+"/blabla.csv").replace(",,,,,,,,,,,,,,,,,",",")
     # print(data)
     # print(pd.read_csv(data.    split(sep="\n")))
     # bt_result.to_csv(sep=";",path="/Users/karlestermann/PycharmProjects/StreamlitDemoCyrus/blabla.csv").replace(",,,,,,,,,,,,,,,,,",",")
-    data1 = pd.read_csv("/Users/karlestermann/PycharmProjects/StreamlitDemoCyrus/blabla.csv",sep=",",skip_blank_lines=True,na_values=None)
+    data1 = pd.read_csv(cwd+"/blabla.csv",sep=",",skip_blank_lines=True,na_values=None)
     # print(data1)
     st.table(data1)
 
