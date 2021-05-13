@@ -20,6 +20,7 @@ from sklearn.decomposition import PCA
 from Stock_Backtesting import ticker
 from PredictVolatility import tickerpv
 from Technical_Indicators import tickerti
+from bollinger import tickerbol
 
 
 @st.cache
@@ -434,7 +435,7 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators","Dashbord"])
+                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators","Bollinger Band","Dashbord"])
 
     # Load data
     df, rows, columns, filename = load_data()
@@ -477,16 +478,23 @@ def main():
 
 
     if choose_model == "Predict Volatility":
-        st.sidebar.header ('Aktien Parameter')
+        st.sidebar.header ('Predickt')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerpv (tickertxt)
 
     if choose_model == "Technical Indicators":
-        st.sidebar.header ('Technical Parameter')
+        st.sidebar.header ('Technical ')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerti (tickertxt)
+
+    if choose_model == "Bollinger Band":
+        st.sidebar.header ('Bollinger Nabd ')
+        st.sidebar.markdown ('Enter a new ticker')
+        tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
+        model_xgb = tickerbol (tickertxt)
+
 
     if choose_model == "Dashbord":
         st.sidebar.header ('Dashboard')
