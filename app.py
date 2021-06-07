@@ -21,6 +21,7 @@ from Stock_Backtesting import ticker
 from PredictVolatility import tickerpv
 from Technical_Indicators import tickerti
 from bollinger import tickerbol
+from Stockmarketscreening import stockmarket
 
 
 @st.cache
@@ -435,7 +436,9 @@ def main():
 
     st.sidebar.title('Menu')
     choose_model = st.sidebar.selectbox("Choose the page or model", [
-                                        "Home", "Logistic Regression", "XGB","Stock Backtesting","Predict Volatility","Technical Indicators","Bollinger Band","Dashbord"])
+                                        "Home", "Logistic Regression",
+        "XGB","Stock Backtesting","Predict Volatility",
+        "Technical Indicators","Bollinger Band","Stock Market","Dashbord"])
 
     # Load data
     df, rows, columns, filename = load_data()
@@ -495,6 +498,11 @@ def main():
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerbol (tickertxt)
 
+    if choose_model == "Stock Market":
+        st.sidebar.header ('Stock Market')
+        st.sidebar.markdown ('Enter a new ticker')
+        tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
+        model_xgb = stockmarket (tickertxt)
 
     if choose_model == "Dashbord":
         st.sidebar.header ('Dashboard')
