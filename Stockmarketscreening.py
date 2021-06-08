@@ -155,7 +155,7 @@ def stockmarket(tickertxt):
 
     company_info = pd.DataFrame(data={'Symbol': stock, 'Sentiment': sentiment, 'direction': sentiment_trend, 'Mentions':mentions})
 
-    st.table(company_info)
+    st.table(company_info.head(50))
 
 
 # We then combine these results with our results from the biggest movers on a given day. This done using a left join of this data frame with the original movers data frame
@@ -165,7 +165,7 @@ def stockmarket(tickertxt):
 
     top_stocks = movers.merge(company_info, on='Symbol', how='left')
     top_stocks.drop(['Market Cap','PE Ratio (TTM)'], axis=1, inplace=True)
-    st.table(top_stocks)
+    st.table(top_stocks.head(50))
 
 
 # A couple of stocks pop up with both very good sentiments and an upwards trend in favourability. ZNGA, TWTR and AES for instance stood out as potentially good picks. Note, the mentions here refer to the number of times the stock was referenced according to the internal metrics used by [sentdex](sentdex.com). Let's attempt supplimenting this information with some data based on twitter. We get stocks that showed the strongest twitter sentiments with a time period of 1 month
@@ -256,7 +256,7 @@ def stockmarket(tickertxt):
     twitter_df2.drop_duplicates(subset ="Symbol",
                          keep = 'first', inplace = True)
     twitter_df2.reset_index(drop=True,inplace=True)
-    st.table(twitter_df2.head())
+    st.table(twitter_df2.head(50))
 
 
 # We again combine the dataframes to earlier concatanated dataframes. This will form our recommender list
@@ -267,7 +267,7 @@ def stockmarket(tickertxt):
 
     Recommender_list = Final_list.merge(twitter_df2, on='Symbol', how='left')
     Recommender_list.drop(['Volume','Avg Vol (3 month)'],axis=1, inplace=True)
-    st.table(Recommender_list)
+    st.table(Recommender_list.head(50))
 
 
 # Our list now contains even more informationt to help us with our trades. Stocks which it suggests might generate positive returns include TSLA, ZNGA and TWTR. There is also the posibility that we do not get a stock that falls in all our generated lists, so usage of, for instance, the price information and the twitter data could still give us a good idea of what to expect in terms of performance. As an added measure, we can also obtain information on the sectors to see how they've performed. Again, we will use a one month time period for comparison. The aforementioned stocks belong to the Technology and consumer staples sectors.
@@ -558,7 +558,7 @@ def stockmarket(tickertxt):
 # In[97]:
 
 
-    st.table(mi)
+    st.table(mi.head(50))
 
 
 # The results validate the results using the random forest regressor, but it appears some of the other variables also contribute
