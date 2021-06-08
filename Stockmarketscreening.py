@@ -97,7 +97,7 @@ def predict_range(X,y,model,conf=2.58):
 def stockmarket(tickertxt):
 
     movers = ya.get_day_most_active()
-    movers.head()
+    st.table(movers.head())
 
 
 # Right away we notice that stocks with negative price changes are also included in our results. A filter to get only stocks with a positive % change is applied to get our desired stocks
@@ -106,7 +106,7 @@ def stockmarket(tickertxt):
 
 
     movers = movers[movers['% Change'] >= 0]
-    movers.head()
+    st.table(movers.head())
 
 
 # Excellent! We have successfully scraped the data using the yahoo_fin python module. it is often a good idea to see if those stocks are also generating attention, and what kind of attention it is to avoid getting into false rallies. We will scrap some sentiment data courtesty of [sentdex](http://www.sentdex.com/financial-analysis/). Sometimes sentiments may lag due to source e.g Newsarticle published an hour after event, so we will also utilize [tradefollowers](https://www.tradefollowers.com/strength/twitter_strongest.jsp?tf=1d) for their twitter sentiment data. We will process both lists independently and combine them. For both the sentdex and tradefollowers data we use a 30 day time period. Using a single day might be great for day trading but increases probability of jumping on false rallies.
@@ -155,7 +155,7 @@ def stockmarket(tickertxt):
 
     company_info = pd.DataFrame(data={'Symbol': stock, 'Sentiment': sentiment, 'direction': sentiment_trend, 'Mentions':mentions})
 
-    company_info
+    st.table(company_info)
 
 
 # We then combine these results with our results from the biggest movers on a given day. This done using a left join of this data frame with the original movers data frame
@@ -165,7 +165,7 @@ def stockmarket(tickertxt):
 
     top_stocks = movers.merge(company_info, on='Symbol', how='left')
     top_stocks.drop(['Market Cap','PE Ratio (TTM)'], axis=1, inplace=True)
-    top_stocks
+    st.table(top_stocks)
 
 
 # A couple of stocks pop up with both very good sentiments and an upwards trend in favourability. ZNGA, TWTR and AES for instance stood out as potentially good picks. Note, the mentions here refer to the number of times the stock was referenced according to the internal metrics used by [sentdex](sentdex.com). Let's attempt supplimenting this information with some data based on twitter. We get stocks that showed the strongest twitter sentiments with a time period of 1 month
@@ -204,22 +204,21 @@ def stockmarket(tickertxt):
     twitter_df.drop_duplicates(subset ="Symbol",
                          keep = 'first', inplace = True)
     twitter_df.reset_index(drop=True,inplace=True)
-    twitter_df
+    st.table(twitter_df.head())
 
 
 # Twit_Bull_score refers to the internally scoring used at [tradefollowers](tradefollowers.com) to rank stocks based on twitter sentiments, and can range from 1 to as high as 10,000 or greater. With the twitter sentiments obtains, we combine it with our sentiment data to get an overall idea of the data.
 
 # In[64]:
 
-
+    st.text("Final List")
     Final_list =  top_stocks.merge(twitter_df, on='Symbol', how='left')
-    Final_list
+    st.table(Final_list)
 
 
 # Finally, we include a twitter momentum score.
 
 # In[65]:
-
 
     res2 = requests.get("https://www.tradefollowers.com/active/twitter_active.jsp?tf=1m")
     soup2 = BeautifulSoup(res2.text)
@@ -251,21 +250,24 @@ def stockmarket(tickertxt):
     twitter_df2 = pd.DataFrame({'Symbol': twit_stock2, 'Sector': sector2, 'Twit_mom': twit_score2})
 
     # Remove NA values
+    st.text("Final List mit twitter")
+
     twitter_df2.dropna(inplace=True)
     twitter_df2.drop_duplicates(subset ="Symbol",
                          keep = 'first', inplace = True)
     twitter_df2.reset_index(drop=True,inplace=True)
-    twitter_df2
+    st.table(twitter_df2.head())
 
 
 # We again combine the dataframes to earlier concatanated dataframes. This will form our recommender list
 
 # In[67]:
 
+    st.text("Final List Recommandet")
 
     Recommender_list = Final_list.merge(twitter_df2, on='Symbol', how='left')
     Recommender_list.drop(['Volume','Avg Vol (3 month)'],axis=1, inplace=True)
-    Recommender_list
+    st.table(Recommender_list)
 
 
 # Our list now contains even more informationt to help us with our trades. Stocks which it suggests might generate positive returns include TSLA, ZNGA and TWTR. There is also the posibility that we do not get a stock that falls in all our generated lists, so usage of, for instance, the price information and the twitter data could still give us a good idea of what to expect in terms of performance. As an added measure, we can also obtain information on the sectors to see how they've performed. Again, we will use a one month time period for comparison. The aforementioned stocks belong to the Technology and consumer staples sectors.
@@ -273,7 +275,8 @@ def stockmarket(tickertxt):
 # In[68]:
 
 
-    sp = SectorPerformances(key='0E66O7ZP6W7A1LC9', output_format='pandas')
+    sp = SectorPerformances(key='ZQ5ATHRTMUO7YUKR', output_format='pandas')
+    time.sleep (10)
     plt.figure(figsize=(8,8))
     data, meta_data = sp.get_sector()
     st.text(meta_data)
@@ -317,13 +320,13 @@ def stockmarket(tickertxt):
 
     stock_dt = web.DataReader('AMD','yahoo',start,end)
     stock_dt.reset_index(inplace=True)
-    stock_dt.head()
+    st.table(stock_dt.head())
 
 
 # In[72]:
 
 
-    stock_dt.tail()
+    st.table(stock_dt.tail())
 
 
 # ### Feature selection/engineering
@@ -336,36 +339,36 @@ def stockmarket(tickertxt):
 # Technical Indicators
 
     # RSI
-    t_rsi = TechIndicators(key='0E66O7ZP6W7A1LC9',output_format='pandas')
+    t_rsi = TechIndicators(key='ZQ5ATHRTMUO7YUKR',output_format='pandas')
+    time.sleep (15)
     data_rsi, meta_data_rsi = t_rsi.get_rsi(symbol='AMD', interval='daily',time_period = 9,
                               series_type='open')
-    timeout = 15
 
     # SMA
-    t_sma = TechIndicators(key='0E66O7ZP6W7A1LC9',output_format='pandas')
+    t_sma = TechIndicators(key='ZQ5ATHRTMUO7YUKR',output_format='pandas')
+    time.sleep (15)
     data_sma, meta_data_sma = t_sma.get_sma(symbol='AMD', interval='daily',time_period = 9,
                               series_type='open')
-    timeout = 15
 
     #EMA
-    t_ema = TechIndicators(key='0E66O7ZP6W7A1LC9',output_format='pandas')
+    t_ema = TechIndicators(key='ZQ5ATHRTMUO7YUKR',output_format='pandas')
+    time.sleep (15)
     data_ema, meta_data_ema = t_ema.get_ema(symbol='AMD', interval='daily',time_period = 9,
                               series_type='open')
-    timeout = 15
 
 
 # In[74]:
 
 
     #On Balance volume
-    t_obv = TechIndicators(key='0E66O7ZP6W7A1LC9',output_format='pandas')
+    t_obv = TechIndicators(key='ZQ5ATHRTMUO7YUKR',output_format='pandas')
+    time.sleep (15)
     data_obv, meta_data_obv = t_obv.get_obv(symbol='AMD', interval='daily')
-    timeout = 15
 
     # Bollinger bands
-    t_bbands = TechIndicators(key='0E66O7ZP6W7A1LC9',output_format='pandas')
+    t_bbands = TechIndicators(key='ZQ5ATHRTMUO7YUKR',output_format='pandas')
+    time.sleep (15)
     data_bbands, meta_data_bb = t_bbands.get_bbands(symbol='AMD', interval='daily', series_type='open', time_period=9)
-
 
 # To learn more about technical indicators and how they are useful in stock analysis, I welcome you to explore [investopedia](https://www.investopedia.com/). Let's combine these indicators into a dataframe
 
@@ -391,7 +394,7 @@ def stockmarket(tickertxt):
 
     df_updated = pd.concat([stock_dt,t_ind],axis=1)
     df_updated.set_index('Date',drop=True,inplace=True)
-    df_updated
+    st.table(df_updated.tail(20))
 
 
 # Before we begin, it is often a good idea to visually inspect the stock data to have an idea of the price trend and volume information
@@ -404,7 +407,7 @@ def stockmarket(tickertxt):
 # In[79]:
 
 
-    mpf.plot(df_updated.loc[datetime(2020,5,1):datetime(2021,6,3)],type='candle',style='yahoo',figsize=(8,6),volume=True)
+    mpf.plot(df_updated.loc[datetime(2021,5,1):datetime(2021,6,3)],type='candle',style='yahoo',figsize=(8,6),volume=True)
 
 
 # in the month of July, AMD experienced a massive price surge. Let's have a look at the data with the indicators included
@@ -414,26 +417,26 @@ def stockmarket(tickertxt):
 
     fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(12,12))
 
-    ax[0].plot(df_updated['Open'].loc[datetime(2020,5,1):datetime(2020,8,11)],'k',lw=2,label='Close')
-    ax[0].plot(df_updated['EMA'].loc[datetime(2020,5,1):datetime(2020,8,11)],'r',lw=1.5,label='EMA')
-    ax[0].plot(df_updated['SMA'].loc[datetime(2020,5,1):datetime(2020,8,11)],'b',lw=1.5,label='SMA')
-    ax[0].plot(df_updated['Real Upper Band'].loc[datetime(2020,5,1):datetime(2020,8,11)],'g',lw=1.5,label='Boolinger band (upper)')
-    ax[0].plot(df_updated['Real Lower Band'].loc[datetime(2020,5,1):datetime(2020,8,11)],'y',lw=1.5,label='Boolinger band (lower)')
+    ax[0].plot(df_updated['Open'].loc[datetime(2021,5,1):datetime(2021,6,11)],'k',lw=2,label='Close')
+    ax[0].plot(df_updated['EMA'].loc[datetime(2021,5,1):datetime(2021,6,11)],'r',lw=1.5,label='EMA')
+    ax[0].plot(df_updated['SMA'].loc[datetime(2021,5,1):datetime(2021,6,11)],'b',lw=1.5,label='SMA')
+    ax[0].plot(df_updated['Real Upper Band'].loc[datetime(2021,5,1):datetime(2021,6,11)],'g',lw=1.5,label='Boolinger band (upper)')
+    ax[0].plot(df_updated['Real Lower Band'].loc[datetime(2021,5,1):datetime(2021,6,11)],'y',lw=1.5,label='Boolinger band (lower)')
     ax[0].set_ylabel('Closing price')
 
 
     ax[0].legend()
 
 
-    temp = len(df_updated['RSI'].loc[datetime(2020,5,1):datetime(2020,8,11)])
+    temp = len(df_updated['RSI'].loc[datetime(2021,5,1):datetime(2021,6,11)])
 
-    ax[1].plot(df_updated['RSI'].loc[datetime(2020,5,1):datetime(2020,8,11)],'g',lw=2,label='RSI')
-    ax[1].plot(df_updated['RSI'].loc[datetime(2020,5,1):datetime(2020,8,11)].index,70*np.ones((temp,1)).flatten(),'k')
-    ax[1].plot(df_updated['RSI'].loc[datetime(2020,5,1):datetime(2020,8,11)].index,30*np.ones((temp,1)).flatten(),'k')
+    ax[1].plot(df_updated['RSI'].loc[datetime(2021,5,1):datetime(2021,6,11)],'g',lw=2,label='RSI')
+    ax[1].plot(df_updated['RSI'].loc[datetime(2021,5,1):datetime(2021,6,11)].index,70*np.ones((temp,1)).flatten(),'k')
+    ax[1].plot(df_updated['RSI'].loc[datetime(2021,5,1):datetime(2021,6,11)].index,30*np.ones((temp,1)).flatten(),'k')
     ax[1].set_ylabel('RSI')
     #ax[1].legend()
 
-    ax[2].plot(df_updated['OBV'].loc[datetime(2020,5,1):datetime(2020,8,11)],'y',lw=2,label='OBV')
+    ax[2].plot(df_updated['OBV'].loc[datetime(2021,5,1):datetime(2021,6,11)],'y',lw=2,label='OBV')
     ax[2].set_ylabel('On balance Volume')
     #ax[2].legend()
     ax[2].set_xlabel('Date');
@@ -465,7 +468,7 @@ def stockmarket(tickertxt):
 # In[82]:
 
 
-    df_updated.head()
+    st.table(df_updated.head())
 
 
 # The next step is to visualize how the features relate to each other. We employ a correlation matrix for this purpose
@@ -555,7 +558,7 @@ def stockmarket(tickertxt):
 # In[97]:
 
 
-    mi
+    st.table(mi)
 
 
 # The results validate the results using the random forest regressor, but it appears some of the other variables also contribute
@@ -899,6 +902,7 @@ def stockmarket(tickertxt):
     plt.plot(df_updated['Open-Close'][1:], (regr.coef_[0] * df_updated['Open-Close'][1:] + regr.intercept_), c='r' );
     plt.xlabel('Open-Close')
     plt.ylabel('Diff-Close')
+    st.pyplot (plt , use_container_width=True)
 
 
 # We obtained a mean square error of 0.58 which is fairly moderate. Our R^2 value basically says 54% of the variance in the
