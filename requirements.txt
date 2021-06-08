@@ -10,7 +10,7 @@ alpha_vantage==2.3.1
 streamlit==0.80.0
 numpy==1.19.5
 scipy==1.6.1
-TA_Lib==0.4.19
+#TA_Lib==0.4.19
 mlxtend==0.18.0
 yfinance==0.1.59
 seaborn==0.11.1
