@@ -26,7 +26,7 @@ from Stockmarketscreening import stockmarket
 
 @st.cache
 def load_data(filename=None):
-    filename_default = 'training.csv'
+    filename_default = '../Stock-picking-and-analysis/training.csv'
     if not filename:
         filename = filename_default
 
