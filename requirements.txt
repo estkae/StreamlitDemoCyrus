@@ -15,7 +15,7 @@ mlxtend==0.18.0
 yfinance==0.1.59
 seaborn==0.11.1
 mplfinance==0.12.7a17
-tf_nightly
+#tf_nightly
 arch==4.19
 beautifulsoup4==4.9.3
 python_dateutil==2.8.1
