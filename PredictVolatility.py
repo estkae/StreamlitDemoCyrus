@@ -20,15 +20,33 @@ import streamlit as st
 def tickerpv (tickertxt):
     ticker = tickertxt
     today = date.today ().strftime ("%Y-%m-%d")
-    # print(today)
+    startdatum = date(2020,9,30)
+    enddatum = date.today()
+    # print (enddatum)
+    totalday = enddatum-startdatum
+    # print(totalday)
     # print(ticker)
-    stock_data = yf.download(ticker, start="2016-01-04", end=today)
+    stock_data = yf.download(ticker, start=startdatum, end=enddatum)
+    print("Info: ",len(stock_data.index))
 
+    st.table(stock_data.tail())
     st.table(stock_data.head())
+    # st.table(stock_data.count())
+    if totalday.days > 365.0:
+        totalday = 365
+    else:
+        # totalday = stock_data.count().iloc[1:1]
+        totalday = len(stock_data.index)-5
 
+    #print ("TotalTage: ",stock_data.iloc[2:1])
     stock_data['Return'] = 100 * (stock_data['Close'].pct_change())
 
+    # st.table (stock_data.tail ())
+
     stock_data.dropna(inplace=True)
+
+    # st.table (stock_data.tail ())
+
 
     fig = plt.figure()
     fig.set_figwidth(12)
@@ -58,23 +76,25 @@ def tickerpv (tickertxt):
     gm_result = garch_model.fit(disp='off')
     st.text(gm_result.params)
 
-    print('\n')
-
     gm_forecast = gm_result.forecast(horizon = 5)
     st.text(gm_forecast.variance[-1:])
 
 
     rolling_predictions = []
-    test_size = 365
+
+    test_size = totalday
+    #print ("Rolling",test_size.days)
 
     for i in range(test_size):
+        # print(stock_data.count())
         train = stock_data['Return'][:-(test_size-i)]
+        # print("Index",i,"TS", test_size, train.head())
         model = arch_model(train, p=1, q=1)
-        model_fit = model.fit(disp='off')
+        model_fit = model.fit(first_obs=startdatum, last_obs=enddatum, disp='off')
         pred = model_fit.forecast(horizon=1)
         rolling_predictions.append(np.sqrt(pred.variance.values[-1,:][0]))
-
-    rolling_predictions = pd.Series(rolling_predictions, index=stock_data['Return'].index[-365:])
+    # print (pred.variance.tail ())
+    rolling_predictions = pd.Series(rolling_predictions, index=stock_data['Return'].index[-totalday:])
 
     plt.figure(figsize=(10,4))
     plt.plot(rolling_predictions)
@@ -83,7 +103,7 @@ def tickerpv (tickertxt):
     # plt.show()
 
     plt.figure(figsize=(12,4))
-    plt.plot(stock_data['Return'][-365:])
+    plt.plot(stock_data['Return'][-totalday:])
     plt.plot(rolling_predictions)
     plt.title('Volatility Prediction - Rolling Forecast')
     plt.legend(['True Daily Returns', 'Predicted Volatility'])

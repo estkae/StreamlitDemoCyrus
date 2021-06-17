@@ -1,27 +1,22 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+# import numpy as np
 import datetime
-import time
-from sklearn import metrics
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import StandardScaler, RobustScaler
+# import time
+# from sklearn import metrics
+# from sklearn.preprocessing import LabelEncoder
+# from sklearn.preprocessing import StandardScaler, RobustScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, accuracy_score, classification_report, confusion_matrix
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import os
 import base64
 from mlxtend.plotting import plot_decision_regions
 from sklearn.decomposition import PCA
-from Stock_Backtesting import ticker
-from PredictVolatility import tickerpv
-from Technical_Indicators import tickerti
-from bollinger import tickerbol
-from Stockmarketscreening import stockmarket
 
 
 @st.cache
@@ -474,6 +469,7 @@ def main():
             xgb_predictor(model_xgb, rows, columns, df, drop_list)
 
     if choose_model == "Stock Backtesting":
+        from Stock_Backtesting import ticker
         st.sidebar.header ('Hyper Parameters')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input("Paste Aktie here", value='AMZN')
@@ -481,24 +477,28 @@ def main():
 
 
     if choose_model == "Predict Volatility":
+        from PredictVolatility import tickerpv
         st.sidebar.header ('Predickt')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerpv (tickertxt)
 
     if choose_model == "Technical Indicators":
+        from Technical_Indicators import tickerti
         st.sidebar.header ('Technical ')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerti (tickertxt)
 
     if choose_model == "Bollinger Band":
+        from bollinger import tickerbol
         st.sidebar.header ('Bollinger Nabd ')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
         model_xgb = tickerbol (tickertxt)
 
     if choose_model == "Stock Market":
+        from Stockmarketscreening import stockmarket
         st.sidebar.header ('Stock Market')
         st.sidebar.markdown ('Enter a new ticker')
         tickertxt = st.sidebar.text_input ("Paste Aktie here" , value='AMZN')
